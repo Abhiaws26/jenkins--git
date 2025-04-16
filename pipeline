@@ -1,13 +1,24 @@
 pipeline {
-  agent {
-    docker { image 'node:20-alpine' }
-  }
-  stages {
-    stage('Test') {
-      steps {
-        sh 'node --version'
-      }
+    agent any  // Use any available agent or node
+
+    stages {
+        stage('Greeting') {
+            steps {
+                echo 'Hello, Jenkins!'
+            }
+        }
+
+        stage('List Files') {
+            steps {
+                sh 'ls -l'
+            }
+        }
+
+        stage('Done') {
+            steps {
+                echo 'Pipeline completed!'
+            }
+        }
     }
-  }
 }
 
