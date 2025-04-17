@@ -1,0 +1,39 @@
+pipeline {
+    agent {
+        docker {
+            image 'python:3.10'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
+
+    stages {
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'pytest'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building the Python application...'
+                // Example: create a distribution package
+                sh 'python setup.py sdist'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the app...'
+                // Replace with actual deploy commands
+                sh 'scp -r ./dist user@server:/var/www/html'
+            }
+        }
+    }
+}
+
