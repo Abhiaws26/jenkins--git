@@ -6,10 +6,29 @@ pipeline {
         }
     }
 
+    environment {
+        // Set the working directory path
+        WORKSPACE_DIR = "/var/lib/jenkins/workspace/python-check"
+    }
+
     stages {
+        stage('Checkout SCM') {
+            steps {
+                // Checkout the source code from the repository
+                checkout scm
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r requirements.txt'
+                script {
+                    // Ensure requirements.txt exists and install dependencies
+                    if (fileExists('requirements.txt')) {
+                        sh 'pip install -r requirements.txt'
+                    } else {
+                        error "requirements.txt not found!"
+                    }
+                }
             }
         }
 
