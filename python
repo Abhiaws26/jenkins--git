@@ -1,58 +1,22 @@
 pipeline {
     agent {
-        docker {
-            image 'python:3.10'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
+        docker { image 'python:3.10' }
     }
-
-    environment {
-        // Set the working directory path
-        WORKSPACE_DIR = "/var/lib/jenkins/workspace/python-check"
-    }
-
+    
     stages {
-        stage('Checkout SCM') {
-            steps {
-                // Checkout the source code from the repository
-                checkout scm
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
-                script {
-                    // Ensure requirements.txt exists and install dependencies
-                    if (fileExists('requirements.txt')) {
-                        sh 'pip install -r requirements.txt'
-                    } else {
-                        error "requirements.txt not found!"
-                    }
-                }
+                sh 'pip install --upgrade pip'
+                sh 'pip install requests'
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Script') {
             steps {
-                sh 'pytest'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo 'Building the Python application...'
-                // Example: create a distribution package
-                sh 'python setup.py sdist'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deploying the app...'
-                // Replace with actual deploy commands
-                sh 'scp -r ./dist user@server:/var/www/html'
+                sh 'echo "print(\\"Hello from inside Docker\\")" > hello.py'
+                sh 'python hello.py'
             }
         }
     }
 }
-
+                
